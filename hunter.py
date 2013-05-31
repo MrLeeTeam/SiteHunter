@@ -22,16 +22,18 @@ def main():
         try:
             seq_no = database.get_next_seq(config.get_ground_index())
             print "[", datetime.now(), "]", "#%d" % seq_no, " - ",
-            site_url = ground_hunter.fetch_url(seq_no)
-            print site_url,
-            url_object = URL(site_url)
+            site_urls = ground_hunter.fetch_url(seq_no)
 
-            if url_object.data["realm"] is None:
-                print "(Unacceptable URL)"
-                continue
+            for site_url in site_urls:
+                print site_url,
+                url_object = URL(site_url)
 
-            print "(", url_object.get_normal_url(), ")"
-            database.register_new_site(url_object.get_normal_url(), url_object.data["realm"])
+                if url_object.data["realm"] is None:
+                    print "(Unacceptable URL)"
+                    continue
+
+                print "(", url_object.get_normal_url(), ")"
+                database.register_new_site(url_object.get_normal_url(), url_object.data["realm"])
 
         except Exception, e:
             print e.message
