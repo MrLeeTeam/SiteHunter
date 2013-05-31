@@ -3,9 +3,9 @@ import requests
 import json
 
 DAUM_VIEW = 1
-NAVER_BLOG = 2
+NAVER_SECTION = 2
 
-Name = {DAUM_VIEW : "Daum", NAVER_BLOG : "Naver"}
+Name = {DAUM_VIEW : "Daum", NAVER_SECTION : "Naver"}
 
 
 class Ground(object):
@@ -28,8 +28,6 @@ class Ground(object):
         raise "Not implmented"
 
 
-
-
 class DaumView(Ground):
 
     def __init__(self):
@@ -38,7 +36,7 @@ class DaumView(Ground):
         self.base_url = "http://v.daum.net"
 
     def make_request_info(self, seq_no):
-        return {'url', self.base_url + "/link/%d" % seq_no}
+        return {'url': self.base_url + "/link/%d" % seq_no}
 
     def extract_from_ground(self, ground_info):
         agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_3) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.43 Safari/537.31"
@@ -56,7 +54,7 @@ class NaverSection(Ground):
 
     def __init__(self):
         Ground.__init__(self)
-        self.ground_type = DAUM_VIEW
+        self.ground_type = NAVER_SECTION
         self.base_url = "http://m.blog.naver.com/DirectoryPostListAsync.nhn"
 
     def make_request_info(self, seq_no):
@@ -69,8 +67,8 @@ class NaverSection(Ground):
         pass
 
     def extract_from_ground(self, ground_info):
-        dataset= ground_info['data']
-        lists= set()
+        dataset = ground_info['data']
+        lists = set()
 
         for i in range(40):
             dataset['seq'] = i
@@ -88,7 +86,7 @@ class NaverSection(Ground):
 
             for line in lines:
                 if "blogId" in line:
-                    id=line.replace("\"blogId\":\"", "").replace("\",","")
+                    id = line.replace("\"blogId\":\"", "").replace("\",","")
                     lists.add("blog.naver.com/%s/0" % id.strip())
                     #print line
 
@@ -101,7 +99,7 @@ def get_ground(type):
     type = int(type)
     if type == DAUM_VIEW:
         ground = DaumView()
-    elif type == NAVER_BLOG:
+    elif type == NAVER_SECTION:
         ground = NaverSection()
 
     return ground
